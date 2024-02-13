@@ -3,13 +3,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:project1/widgets/custom_button.dart';
 import 'package:project1/widgets/custom_input.dart';
 import 'package:project1/dot_navigation_bar.dart';
+import 'profileShowDetails.dart';
+
 import 'dart:io';
-import 'package:flutter/rendering.dart';
 
 enum _SelectedTab { Home, AddPost, Chat, Profile }
 
 class FormPage extends StatefulWidget {
-  const FormPage({Key? key}) : super(key: key);
+  const FormPage({super.key});
 
   @override
   _FormPageState createState() => _FormPageState();
@@ -46,11 +47,12 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
   Future<void> _pickImage() async {
     try {
       final picker = ImagePicker();
-      final pickedImage = await picker.getImage(source: ImageSource.gallery);
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
       if (pickedImage != null) {
         setState(() {
-          selectedImages.add(pickedImage);
+          selectedImages.add(PickedFile(pickedImage.path));
+          print("Selected Images: $selectedImages");
         });
       }
     } catch (e) {
@@ -79,39 +81,41 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(20),
           child: ListView(
             children: [
-              Container(
-                width: 100, // Specify the desired width
-                height: 200, // Specify the desired height
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: selectedImages.map((PickedFile image) {
+                  return Center(
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Image.file(
+                        File(image.path),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(
+                width: 50, // Specify the desired width
+                height: 50, // Specify the desired height
                 child: ElevatedButton(
                   onPressed: _pickImage,
                   child: const Text("Add Image"),
                 ),
               ),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: selectedImages.map((PickedFile image) {
-                  return Container(
-                    width: 100,
-                    height: 500,
-                    child: Image.file(
-                      File(image.path),
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomInput(
                   hint: "Name...",
-                  inputBorder: OutlineInputBorder(),
+                  inputBorder: const OutlineInputBorder(),
                   onChanged: (value) {
                     setState(() {
                       Name = value;
                     });
                   }),
               DropdownButtonFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Types",
                   border: OutlineInputBorder(),
                 ),
@@ -130,17 +134,17 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                   );
                 }).toList(),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomInput(
                   hint: "Breed",
-                  inputBorder: OutlineInputBorder(),
+                  inputBorder: const OutlineInputBorder(),
                   onChanged: (value) {
                     setState(() {
                       Breed = value;
                     });
                   }),
               DropdownButtonFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Gender",
                   border: OutlineInputBorder(),
                 ),
@@ -159,9 +163,9 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                   );
                 }).toList(),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               InputDecorator(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Selected Colors",
                   border: OutlineInputBorder(),
                 ),
@@ -175,7 +179,7 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 8.0,
                 runSpacing: 8.0,
@@ -196,11 +200,11 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: selectedColors.contains(color)
-                              ? Color.fromARGB(255, 250, 86, 114)
+                              ? const Color.fromARGB(255, 250, 86, 114)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(8.0),
                           border: Border.all(
-                            color: Color.fromARGB(
+                            color: const Color.fromARGB(
                                 255, 34, 17, 112), // Border color
                             width: 2.0, // Border width
                           ),
@@ -210,7 +214,7 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                           style: TextStyle(
                             color: selectedColors.contains(color)
                                 ? Colors.white
-                                : Color.fromARGB(255, 34, 17, 112),
+                                : const Color.fromARGB(255, 34, 17, 112),
                           ),
                         ),
                       ),
@@ -218,13 +222,13 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                   );
                 }).toList(),
               ),
-              SizedBox(height: 16),
-              SizedBox(height: 8),
-              SizedBox(height: 8),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               CustomInput(
                   hint: "Description...",
-                  inputBorder: OutlineInputBorder(),
+                  inputBorder: const OutlineInputBorder(),
                   onChanged: (value) {
                     setState(() {
                       Description = value;
@@ -240,23 +244,38 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
                   print("Selected colors: $selectedColors");
                   print("Selected images: $selectedImages");
                   print("Gender: $Gender");
+
                   print("Breed: $Breed");
                   print("Name: $Name");
                   print("Type: $Type");
                   print("Description: $Description");
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => profileShowDetails(
+                              selectedColors: selectedColors,
+                              selectedImages: selectedImages,
+                              gender: Gender ?? "",
+                              breed: Breed ?? "",
+                              name: Name ?? "",
+                              type: Type ?? "",
+                              description: Description ?? "",
+                            )),
+                  );
                 },
               ),
             ],
           ),
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: SizedBox(
           height: 160,
           child: Padding(
-            padding: EdgeInsets.only(bottom: 0),
+            padding: const EdgeInsets.only(bottom: 0),
             child: DotNavigationBar(
-              margin: EdgeInsets.only(left: 30, right: 30),
+              margin: const EdgeInsets.only(left: 30, right: 30),
               currentIndex: _SelectedTab.values.indexOf(_selectedTab),
-              dotIndicatorColor: Color.fromARGB(255, 250, 86, 114),
+              dotIndicatorColor: const Color.fromARGB(255, 250, 86, 114),
               unselectedItemColor: Colors.grey[300],
               splashBorderRadius: 50,
               //enableFloatingNavBar: false,
@@ -264,26 +283,26 @@ class _FormPageState extends State<FormPage> with TickerProviderStateMixin {
               items: [
                 /// Home
                 DotNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  selectedColor: Color.fromARGB(255, 250, 86, 114),
+                  icon: const Icon(Icons.home),
+                  selectedColor: const Color.fromARGB(255, 250, 86, 114),
                 ),
 
                 /// Likes
                 DotNavigationBarItem(
-                  icon: Icon(Icons.favorite),
-                  selectedColor: Color.fromARGB(255, 250, 86, 114),
+                  icon: const Icon(Icons.add_circle),
+                  selectedColor: const Color.fromARGB(255, 250, 86, 114),
                 ),
 
                 /// Search
                 DotNavigationBarItem(
-                  icon: Icon(Icons.search),
-                  selectedColor: Color.fromARGB(255, 250, 86, 114),
+                  icon: const Icon(Icons.chat),
+                  selectedColor: const Color.fromARGB(255, 250, 86, 114),
                 ),
 
                 /// Profile
                 DotNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  selectedColor: Color.fromARGB(255, 250, 86, 114),
+                  icon: const Icon(Icons.person),
+                  selectedColor: const Color.fromARGB(255, 250, 86, 114),
                 ),
               ],
             ),
